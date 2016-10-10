@@ -1,6 +1,7 @@
 package cz.aniska.sudoku.controller;
 
 import cz.aniska.sudoku.model.SudokuCheckerStatus;
+import cz.aniska.sudoku.model.SudokuCheckerStatusResponse;
 import cz.aniska.sudoku.service.SudokuCheckerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +21,13 @@ public class SudokuCheckerController {
     private SudokuCheckerService sudokuCheckerService;
 
     @RequestMapping(value="/checksudoku", method= RequestMethod.POST)
-    public ResponseEntity<SudokuCheckerStatus> checkBoard(@RequestBody final int[][] sudokuBoard) {
+    public ResponseEntity<SudokuCheckerStatusResponse> checkBoard(@RequestBody final int[][] sudokuBoard) {
         sudokuCheckerService.validateBoardDimensions(sudokuBoard);
 
         final SudokuCheckerStatus sudokuCheckerStatus =
                 sudokuCheckerService.checkSudokuBoard(sudokuBoard);
 
-        return new ResponseEntity<>(sudokuCheckerStatus, HttpStatus.OK);
+        return new ResponseEntity<>(new SudokuCheckerStatusResponse(sudokuCheckerStatus), HttpStatus.OK);
     }
 
 }
