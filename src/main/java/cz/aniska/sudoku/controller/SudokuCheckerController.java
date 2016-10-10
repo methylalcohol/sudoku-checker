@@ -23,9 +23,10 @@ public class SudokuCheckerController {
     public ResponseEntity<SudokuCheckerStatus> checkBoard(@RequestBody final int[][] sudokuBoard) {
         sudokuCheckerService.validateBoardDimensions(sudokuBoard);
 
-        //todo check moves
+        final SudokuCheckerStatus sudokuCheckerStatus =
+                sudokuCheckerService.checkSudokuBoard(sudokuBoard);
 
-        return new ResponseEntity<>(SudokuCheckerStatus.SUCCESS_MOVE, HttpStatus.OK);
+        return new ResponseEntity<>(sudokuCheckerStatus, HttpStatus.OK);
     }
 
 }

@@ -24,6 +24,9 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
     @Override
     public SudokuCheckerStatus checkSudokuBoard(final int[][] board) {
         //we do 9 iterations as we have 9 rows, 9 columns and 9 squares
+
+        boolean someBoxEmptyEmptyFlag = false;
+
         for (int i = 0; i < 9; i++) {
             //row is already known as it is first index of 2D array
             final int[] row = board[i];
@@ -39,11 +42,22 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
                 square[rowIndex] = board[(i / 3) * 3 + rowIndex / 3][i * 3 % 9 + rowIndex % 3];
             }
 
-            if (!validateParticularRowColumnOrSquare(row) ||
-                    !validateParticularRowColumnOrSquare(column) ||
-                        !validateParticularRowColumnOrSquare(square)) {
+            //validation results
+            CheckNumbersResult checkRowResult = validateParticularRowColumnOrSquare(row);
+            CheckNumbersResult checkColumnResult = validateParticularRowColumnOrSquare(column);
+            CheckNumbersResult checkSquare = validateParticularRowColumnOrSquare(square);
+
+            //check whether sudoku can be potentially finished
+            someBoxEmptyEmptyFlag = checkRowResult.isSomeBoxEmpty() |
+                    checkColumnResult.isSomeBoxEmpty() | checkSquare.isSomeBoxEmpty();
+
+            if (!checkRowResult.isNumbersAreValid() ||
+                    !checkColumnResult.isNumbersAreValid() ||
+                        !checkSquare.isNumbersAreValid()) {
 
                 return SudokuCheckerStatus.NOT_VALID_MOVE;
+            } else if (someBoxEmptyEmptyFlag) {
+                return SudokuCheckerStatus.SUDOKU_FINISHED;
             }
         }
 
@@ -55,22 +69,27 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
      * @param numbers
      * @return
      */
-    private boolean validateParticularRowColumnOrSquare(final int[] numbers) {
+    private CheckNumbersResult validateParticularRowColumnOrSquare(final int[] numbers) {
         //set does not allow duplicates, great technique for this case
-        //as sudoku does not allow duplicate number in row, column or square
+        //as sudoku does not allow duplicate numbers in rows, columns or squares
         final Set<Integer> intSetChecker = new HashSet<>();
+
+        boolean emptyBoxDetected = false;
 
         for (int number : numbers) {
             //empty boxes are valid (zero), so we check can jump to the next one
-            if (number == 0) { break; }
+            if (number == 0) {
+                emptyBoxDetected = true;
+                break;
+            }
 
             //validate numbers in boxes
             if (number <= 1 || number > 9 || !intSetChecker.add(number)) {
-                return false;
+                return new CheckNumbersResult(emptyBoxDetected, false);
             }
         }
 
-        return true;
+        return new CheckNumbersResult(emptyBoxDetected, true);
     }
 
     /**
@@ -92,6 +111,31 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
             if (row == null || row.length != 9) {
                 throw new SudokuCheckerException("Sudoku board dimensions are invalid!");
             }
+        }
+    }
+
+    /**
+     * Board number validate class helper that indicates whether all numbers of row, column or square are valid.
+     * Also it keeps information whether some number boxes were empty to help to indicate whether sudoku board
+     * could potentially be successfully finished or not
+     *
+     * @author Aliaksandr Aniska
+     */
+    private class CheckNumbersResult {
+        private boolean someBoxEmpty;
+        private boolean numbersAreValid;
+
+        public CheckNumbersResult(boolean someBoxEmpty, boolean numbersAreValid) {
+            this.someBoxEmpty = someBoxEmpty;
+            this.numbersAreValid = numbersAreValid;
+        }
+
+        public boolean isSomeBoxEmpty() {
+            return someBoxEmpty;
+        }
+
+        public boolean isNumbersAreValid() {
+            return numbersAreValid;
         }
     }
 
