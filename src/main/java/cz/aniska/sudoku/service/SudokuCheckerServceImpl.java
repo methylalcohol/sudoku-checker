@@ -29,13 +29,13 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
             final int[] row = board[i];
             //column should be constructed by iteration through the rows
             final int[] column = new int[9];
-            //square that becomes an 1D array.
+            //square that will become an 1D array.
             final int[] square = new int[9];
 
             for (int rowIndex = 0; rowIndex < 9; rowIndex ++) {
                 //building column
                 column[rowIndex] = board[rowIndex][i];
-                //unbend the square, we map i-square to 1D array
+                //unbend the square, we re-map i-square to 1D array
                 square[rowIndex] = board[(i / 3) * 3 + rowIndex / 3][i * 3 % 9 + rowIndex % 3];
             }
 
@@ -55,16 +55,17 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
      * @param numbers
      * @return
      */
-    private boolean validateParticularRowColumnOrSquare(int[] numbers) {
-        final Set<Integer> intSet = new HashSet<>();
+    private boolean validateParticularRowColumnOrSquare(final int[] numbers) {
+        //set does not allow duplicates, great technique for this case
+        //as sudoku does not allow duplicate number in row, column or square
+        final Set<Integer> intSetChecker = new HashSet<>();
 
         for (int number : numbers) {
-
-            //empty boxes are valid, so we check can jump to the next one
+            //empty boxes are valid (zero), so we check can jump to the next one
             if (number == 0) { break; }
 
             //validate numbers in boxes
-            if (number <= 0 || number > 9 || !intSet.add(number)) {
+            if (number <= 1 || number > 9 || !intSetChecker.add(number)) {
                 return false;
             }
         }
