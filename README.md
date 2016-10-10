@@ -23,7 +23,9 @@ The service can response with 3 different statuses:
 
 3. **SUDOKU_FINISHED** - Indicated that sudoku board is solved. Congrats!
 
+## Build & Run ##
 
+mvn clean spring-boot:run
 
 
 
