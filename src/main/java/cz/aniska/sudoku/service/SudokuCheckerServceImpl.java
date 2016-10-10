@@ -26,11 +26,11 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
         //we do 9 iterations as we have 9 rows, 9 columns and 9 squares
         for (int i = 0; i < 9; i++) {
             //row is already known as it is first index of 2D array
-            int[] row = board[i];
+            final int[] row = board[i];
             //column should be constructed by iteration through the rows
-            int[] column = new int[9];
+            final int[] column = new int[9];
             //square that becomes an 1D array.
-            int[] square = new int[9];
+            final int[] square = new int[9];
 
             for (int rowIndex = 0; rowIndex < 9; rowIndex ++) {
                 //building column
@@ -42,6 +42,7 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
             if (!validateParticularRowColumnOrSquare(row) ||
                     !validateParticularRowColumnOrSquare(column) ||
                         !validateParticularRowColumnOrSquare(square)) {
+
                 return SudokuCheckerStatus.NOT_VALID_MOVE;
             }
         }
