@@ -14,7 +14,7 @@ import java.util.Set;
  * @author Aliaksandr Aniska
  */
 @Component
-public class SudokuCheckerServceImpl implements SudokuCheckerService {
+public class SudokuCheckerServiceImpl implements SudokuCheckerService {
 
     private final int BOARD_SIZE = 9;
     private final int SQUARE_SIDE_LEN = (int) Math.sqrt(BOARD_SIZE);
@@ -49,8 +49,9 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
             CheckNumbersResult checkSquare = validateParticularRowColumnOrSquare(square);
 
             //check whether sudoku can be potentially finished
-            emptyBoxFoundFlag = checkRowResult.isSomeBoxEmpty() |
-                    checkColumnResult.isSomeBoxEmpty() | checkSquare.isSomeBoxEmpty();
+
+            emptyBoxFoundFlag |= checkRowResult.isSomeBoxEmpty() ||
+                    checkColumnResult.isSomeBoxEmpty() || checkSquare.isSomeBoxEmpty();
 
             if (!checkRowResult.isNumbersAreValid() ||
                     !checkColumnResult.isNumbersAreValid() ||
@@ -72,7 +73,7 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
      * @param numbers
      * @return
      */
-    private CheckNumbersResult validateParticularRowColumnOrSquare(final int[] numbers) {
+    protected CheckNumbersResult validateParticularRowColumnOrSquare(final int[] numbers) {
         //set does not allow duplicates, great technique for this case
         //as sudoku does not allow duplicate numbers in rows, columns or squares
         final Set<Integer> intSetChecker = new HashSet<>();
@@ -124,7 +125,7 @@ public class SudokuCheckerServceImpl implements SudokuCheckerService {
      *
      * @author Aliaksandr Aniska
      */
-    private final class CheckNumbersResult {
+    protected final class CheckNumbersResult {
         private final boolean  someBoxEmpty;
         private final boolean  numbersAreValid;
 
