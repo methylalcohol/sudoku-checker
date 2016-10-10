@@ -7,7 +7,16 @@ import cz.aniska.sudoku.model.SudokuCheckerStatus;
  */
 public interface SudokuCheckerService {
 
+    /**
+     *
+     * @param board
+     */
     public void validateBoardDimensions(final int[][] board);
 
+    /**
+     *
+     * @param board
+     * @return
+     */
     public SudokuCheckerStatus checkSudokuBoard(int[][] board);
 }
